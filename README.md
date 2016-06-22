@@ -1,2 +1,2 @@
-# sphinxcontrib-authorship
-authorship for sphinx documentation 
+# sphinxcontrib-contributors
+attribution for contributors to sphinx documentation 

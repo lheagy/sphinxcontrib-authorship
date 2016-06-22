@@ -2,19 +2,25 @@ from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.util.compat import make_admonition
 from sphinx.locale import _
+from sphinx.roles import XRefRole
+
+
+
+# class ContributorsRole(XRefRole):
+
 
 def setup(app):
     app.add_config_value('contributors_include_contributors', True, 'html')
-    app.add_config_value('contributors_json', './contributors.json', 'html')
+    # app.add_config_value('contributors_json', './contributors.json', 'html')
 
-    app.add_node(contributorslist)
+    app.add_node(contributorList)
     app.add_node(contributors,
         html=(visit_contributors_node, depart_contributors_node),
         latex=(visit_contributors_node, depart_contributors_node),
         text=(visit_contributors_node, depart_contributors_node))
 
     app.add_directive('contributors', ContributorsDirective)
-    app.add_directive('contributorslist', ContributorsListDirective)
+    app.add_directive('contributorList', ContributorListDirective)
     app.connect('doctree-resolved', process_contributors_nodes)
     app.connect('env-purge-doc', purge_contributors)
 
@@ -23,7 +29,7 @@ def setup(app):
 class contributors(nodes.Admonition, nodes.Element):
     pass
 
-class contributorslist(nodes.General, nodes.Element):
+class contributorList(nodes.General, nodes.Element):
     pass
 
 def visit_contributors_node(self, node):
@@ -44,14 +50,47 @@ class ContributorsDirective(Directive):
         targetid = "contributors-%d" % env.new_serialno('contributors')
         targetnode = nodes.target('', '', ids=[targetid])
 
+        # print self.content
+
+        # contribs = {}
+
+        # contribs = [c.split(':') for c in self.content]
+        # print len(contribs)
+        # print contribs
+
+        keys = []
+        vals = []
+
+        for contrib in self.content:
+            key, val = contrib.split(':')
+            print key
+            print val
+        #     keys += key
+        #     vals += val
+
+        # contribdict = dict(zip(keys,vals))
+
+        # print contribdict
+
+        # exec 'contribdict = self.content[0]'
+
+        # print contribdict
+        # # self.content[0]
+
+        # for contrib in contribdict.iteritem():
+        #     print contrib
+            # contribs += make_admonition(contributors, self.name, contrib)
+
         ad = make_admonition(contributors, self.name, [_('Contributors')], self.options,
                              self.content, self.lineno, self.content_offset,
                              self.block_text, self.state, self.state_machine)
 
+        # print ad
+
         if not hasattr(env, 'contributors_all_contributors'):
             env.contributors_all_contributorss = []
 
-        print env.docname, self.lineno, ad[0].deepcopy(), targetnode
+        # print env.docname, self.lineno, ad[0].deepcopy(), targetnode
 
         env.contributors_all_contributorss.append({
             'docname': env.docname,
@@ -62,8 +101,22 @@ class ContributorsDirective(Directive):
 
         return [targetnode] + ad
 
-class ContributorsListDirective(Directive):
-    pass
+class ContributorListDirective(Directive):
+
+    has_content = True
+
+    def run(self):
+
+        env = self.state.document.settings.env
+
+        targetid = "contributorList-%d" % env.new_serialno('contributorList')
+        targetnode = nodes.target('', '', ids=[targetid])
+
+        contrib = open(self.content)
+        contribs = json.load(contrib)
+
+        return [targetnode]
+
 
 def purge_contributors(app, env, docname):
     if not hasattr(env, 'contributors_all_contributors'):
@@ -76,11 +129,11 @@ def process_contributors_nodes(app, doctree, fromdocname):
         for node in doctree.traverse(contributor):
             node.parent.remove(node)
 
-    # Replace all contributorslist nodes with a list of the collected contributors.
+    # Replace all contributorList nodes with a list of the collected contributors.
     # Augment each contributor with a backlink to the original location.
     env = app.builder.env
 
-    for node in doctree.traverse(contributorslist):
+    for node in doctree.traverse(contributorList):
         if not app.config.contributors_include_contributors:
             node.replace_self([])
             continue
@@ -106,7 +159,7 @@ def process_contributors_nodes(app, doctree, fromdocname):
             para += newnode
             para += nodes.Text('.)', '.)')
 
-            # Insert into the contributorslist
+            # Insert into the contributorList
             content.append(contributors_info['contributor'])
             content.append(para)
 

@@ -1,13 +1,14 @@
 {
-    "@lheagy":{
+    "lheagy":{
         "name":"Lindsey J. Heagy",
         "affiliation":"University of British Columbia",
         "location":"Vancouver, BC",
         "email":"lheagy@eos.ubc.ca",
         "url":"http://lindseyjh.ca",
-        "tooltip":"https://avatars.githubusercontent.com/u/6361812?v=3"
+        "tooltip":"https://avatars.githubusercontent.com/u/6361812?v=3",
+        "ORCID":"0000-0002-1551-5926"
     },
-    "@simpegbot":{
+    "simpegbot":{
         "name":"SimPEG bot",
         "affiliation":"SimPEG",
         "location":"The Web",

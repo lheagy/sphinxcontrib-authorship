@@ -1,1 +1,1 @@
-from .contributors import ContributorsDirective, ContributorsListDirective, setup
+from .contributors import *

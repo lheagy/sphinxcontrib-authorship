@@ -3,7 +3,7 @@ from docutils.parsers.rst import Directive
 from sphinx.util.compat import make_admonition
 from sphinx.locale import _
 from sphinx.roles import XRefRole
-
+import ast
 
 
 # class ContributorsRole(XRefRole):
@@ -33,9 +33,11 @@ class contributorList(nodes.General, nodes.Element):
     pass
 
 def visit_contributors_node(self, node):
+    print 'visiting contributors node'
     self.visit_admonition(node)
 
 def depart_contributors_node(self, node):
+    print 'leaving contributors node'
     self.depart_admonition(node)
 
 
@@ -57,14 +59,14 @@ class ContributorsDirective(Directive):
         # contribs = [c.split(':') for c in self.content]
         # print len(contribs)
         # print contribs
+        assert len(self.content) == 1, 'a single dictionary must be provided in the contributors list'
 
-        keys = []
-        vals = []
-
-        for contrib in self.content:
-            key, val = contrib.split(':')
-            print key
-            print val
+        contrib = self.content[0]
+        contribdict = ast.literal_eval(contrib)
+        print contribdict
+        print contribdict.keys()
+            # print key
+            # print val
         #     keys += key
         #     vals += val
 
@@ -80,6 +82,27 @@ class ContributorsDirective(Directive):
         # for contrib in contribdict.iteritem():
         #     print contrib
             # contribs += make_admonition(contributors, self.name, contrib)
+
+        content = []
+
+        for key in reversed(contribdict.keys()):
+            print key, contribdict[key]
+            content.append('**{0}**: {1}'.format(key, contribdict[key]))
+
+        content = ['| ' + '{0}'.format(c) for c in content]
+        print ' \n'.join(content)
+
+        content = ' \n'.join(content)
+        self.content[0] = '{0}'.format(content)
+
+        print 'name: ', self.name
+        print 'options: ', self.options
+        print 'content: ', self.content
+        print 'lineno: ', self.lineno
+        print 'content_offset,: ', self.content_offset
+        print 'block_text: ', self.block_text
+        print 'state: ', self.state
+        print 'state_machine: ', self.state_machine
 
         ad = make_admonition(contributors, self.name, [_('Contributors')], self.options,
                              self.content, self.lineno, self.content_offset,

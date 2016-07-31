@@ -1,7 +1,9 @@
 sphinxcontrib-contributors
 ==========================
 
-.. :contributors:{ "Authors": ["lheagy"], "Reviewers": ["simpegbot"]}
+.. contributors::
+
+    { "Authors": ["lheagy"], "Reviewers": ["simpegbot"]}
 
 
 A sphinx extension for attributing project contributors including authors,
